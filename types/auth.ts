@@ -2,7 +2,7 @@ export interface User {
   id: number
   name: string
   email: string
-  role: "consumer" | "partner" | "admin"
+  role: "consumer" | "partner" | "admin" | "seller" | "user"
   permissions?: string[]
   lastLogin?: string
 }

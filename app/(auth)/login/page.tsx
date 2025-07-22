@@ -51,13 +51,13 @@ export default function LoginPage() {
   const [formData, setFormData] = useState<LoginCredentials>({
     email: "",
     password: "",
-    role: "consumer",
+    role: "admin",
     organizationCode: "",
     accessCode: "",
     rememberMe: false,
   })
 
-  const { login, isLoading } = useAuth()
+  const { login, isLoading, user } = useAuth()
   const { theme, setTheme } = useTheme()
   const router = useRouter()
 
@@ -78,17 +78,30 @@ export default function LoginPage() {
     const loginData = {
       email: formData.email,
       password: formData.password,
-      role: selectedRole,
       ...(selectedRole === "partner" && { organizationCode: formData.organizationCode }),
       ...(selectedRole === "admin" && { accessCode: formData.accessCode }),
+      role: selectedRole,
       rememberMe: formData.rememberMe,
-    }
+    } as any;
 
     console.log("Submitting login form:", { ...loginData, password: "[REDACTED]" })
 
     try {
       await login(loginData)
-      router.push(`/${selectedRole}`)
+      // Get the user from localStorage or context
+      let loggedInUser = user;
+      if (!loggedInUser && typeof window !== 'undefined') {
+        const userStr = localStorage.getItem('user');
+        if (userStr) loggedInUser = JSON.parse(userStr);
+      }
+      if (loggedInUser?.role === "admin") {
+        router.push("/admin")
+      } else if (loggedInUser?.role === "partner" || loggedInUser?.role === "seller") {
+        
+        router.push("/partner")
+      } else {
+        router.push("/consumer")
+      }
     } catch (error) {
       console.error("Login submission error:", error)
       // Error is handled in the auth context

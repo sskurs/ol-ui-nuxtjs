@@ -55,13 +55,15 @@ export async function POST(req: NextRequest) {
         requestBody = {
           email: email, // Use the email from the UI
           password: password,
+          role: "admin"
         }
         break
       case "partner":
-        backendEndpoint = `${backendUrl}/api/seller/login`
+        backendEndpoint = `${backendUrl}/api/auth/login`
         requestBody = {
-          username: email,
+          email: email,
           password: password,
+          role: "seller"
         }
         break
       case "consumer":
@@ -69,6 +71,7 @@ export async function POST(req: NextRequest) {
         requestBody = {
           email: email,
           password: password,
+          role:"consumer"
         }
         break
       default:
@@ -76,7 +79,7 @@ export async function POST(req: NextRequest) {
     }
 
     console.log("🌐 Calling backend endpoint:", backendEndpoint)
-    
+    console.log("📦 Request body:", requestBody)
     // Call Symfony backend login endpoint
     const response = await fetch(backendEndpoint, {
       method: 'POST',
@@ -103,9 +106,9 @@ export async function POST(req: NextRequest) {
     // Transform backend response to match frontend expectations
     const user = {
       id: backendData.user.id,
-      name: backendData.user.username, // Use username as name for now
+      name: backendData.user.username,
       email: email,
-      role: role,
+      role: role === "partner" ? "seller" : role, // Map partner to seller in response
       permissions: backendData.user.roles,
       lastLogin: new Date().toISOString(),
     }

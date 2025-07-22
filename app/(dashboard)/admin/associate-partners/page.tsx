@@ -10,6 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, X } from "lucide-react";
+import { DashboardLayout } from "@/components/layout/dashboard-layout";
+
 
 interface Member {
   id: number;
@@ -142,6 +144,7 @@ export default function AssociatePartnersPage() {
   };
 
   return (
+    <DashboardLayout role="admin">
     <div className="flex flex-col md:flex-row gap-8 max-w-6xl mx-auto py-10">
       {/* Members Panel */}
       <Card className="flex-1 bg-card text-card-foreground shadow-lg min-w-[320px]">
@@ -234,5 +237,6 @@ export default function AssociatePartnersPage() {
         </CardContent>
       </Card>
     </div>
+    </DashboardLayout>
   );
 } 
